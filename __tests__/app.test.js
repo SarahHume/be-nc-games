@@ -16,9 +16,7 @@ describe("/api/categories", () => {
             .get("/api/categories")
             .expect(200)
             .then((response) => {
-                console.log("raw response in test", response);
                 const { categories } = response.body;
-                console.log("categories in test", categories);
                 expect(categories).toHaveLength(4);
                 categories.forEach((category) => {
                     expect(category).toMatchObject({
