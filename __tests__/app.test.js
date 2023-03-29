@@ -27,3 +27,14 @@ describe("/api/categories", () => {
             });
     });
 });
+
+describe("Error - invalid path", () => {
+    test("404: responds with an error message when given a request for an invalid path", () => {
+        return request(app)
+            .get("/bannana")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Invalid path");
+            });
+    });
+});
