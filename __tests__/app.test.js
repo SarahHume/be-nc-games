@@ -3,7 +3,6 @@ const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data/index");
 const db = require("../db/connection.js");
 const { app } = require("../app.js");
-const { expect } = require("@jest/globals");
 
 beforeEach(() => seed(testData));
 

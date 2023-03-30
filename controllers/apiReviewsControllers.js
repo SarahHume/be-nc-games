@@ -1,7 +1,7 @@
 const { fetchReviews } = require("../models/apiReviewsModels.js");
 const { fetchReviewById } = require("../models/apiReviewsModels.js");
 
-exports.getReviews = (req, res, next) => {
+exports.getReviews = (req, res) => {
     fetchReviews()
     .then((result) => {
         res.status(200).send({reviews: result});
