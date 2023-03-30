@@ -3,6 +3,7 @@ const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data/index");
 const db = require("../db/connection.js");
 const { app } = require("../app.js");
+const { expect } = require("@jest/globals");
 
 beforeEach(() => seed(testData));
 
@@ -27,6 +28,49 @@ describe("/api/categories", () => {
             });
     });
 });
+
+describe("/api/reviews", () => {
+    test("GET 200: should respond with an array of all review objects", () => {
+        return request(app)
+            .get("/api/reviews")
+            .expect(200)
+            .then((response) => {
+                const { reviews } = response.body;
+                expect(reviews).toHaveLength(13);
+            })
+    })
+    test("GET 200: returned object should be sorted by date", () => {
+        return request(app)
+            .get("/api/reviews")
+            .expect(200)
+            .then((response) => {
+                const { reviews } = response.body;
+                expect(reviews).toBeSortedBy("created_at");
+            })
+
+    })
+    test("GET 200: returned objects should include a 'comment_count' value corresponding with the number of comments in the database with the same review ID", () => {
+        return request(app)
+            .get("/api/reviews")
+            .expect(200)
+            .then((response) => {
+                const { reviews } = response.body;
+                reviews.forEach((review) => {
+                    expect(review).toMatchObject({
+                        owner: expect.any(String),
+                        title: expect.any(String),
+                        review_id: expect.any(Number),
+                        category: expect.any(String),
+                        review_img_url: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        designer: expect.any(String),
+                        comment_count: expect.any(Number)
+                    })
+                })
+            })
+    })
+})
 
 describe("/api/reviews/:review_id", () => {
     test("GET 200: should response with a review object", () => {
