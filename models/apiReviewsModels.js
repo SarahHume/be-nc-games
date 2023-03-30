@@ -17,3 +17,19 @@ exports.fetchReviewById = (review_id) => {
         return result.rows;
     })
 }
+
+exports.fetchCommentsById = (review_id) => {
+    return db.query("SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC", [review_id])
+    .then((result) => {
+        return result.rows;
+    })
+}
+
+exports.checkReviewExists = (review_id) => {
+    return db.query("SELECT * FROM reviews WHERE review_id = $1", [review_id])
+    .then((result => {
+        if (result.rowCount === 0) {
+            return Promise.reject( { status: 404, msg: "Review ID does not exist" } );
+        }
+    }))
+}

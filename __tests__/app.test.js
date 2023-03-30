@@ -110,6 +110,54 @@ describe("/api/reviews/:review_id", () => {
     })
 });
 
+describe("/api/reviews/:review_id/comments", () => {
+    test("should response with an array of comment objects for the given review_id, sorted by most recent first", () => {
+        return request(app)
+            .get("/api/reviews/3/comments")
+            .expect(200)
+            .then((response) => {
+                const { comments } = response.body;
+                expect(comments).toHaveLength(3)
+                expect(comments).toBeSortedBy("created_at", {descending: true})
+                comments.forEach((comment) => {
+                    expect(comment).toMatchObject({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        review_id: expect.any(Number)
+                    })
+                })
+            })
+    })
+    test("GET 200: should return an empty array if passed a valid review ID with no associated comments without throwing an error", () => {
+        return request(app)
+            .get("/api/reviews/1/comments")
+            .expect(200)
+            .then((response) => {
+                const { comments } = response.body;
+                expect(comments).toHaveLength(0);
+            })
+    })
+    test("ERROR 404: Review ID does not exist", () => {
+        return request(app)
+            .get("/api/reviews/5000/comments")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Review ID does not exist");
+            })
+    })
+    test("ERROR 400: Bad request", () => {
+        return request(app)
+            .get("/api/reviews/banana/comments")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request");
+            })
+    })
+})
+
 describe("Error - invalid path", () => {
     test("404: responds with an error message when given a request for an invalid path", () => {
         return request(app)
