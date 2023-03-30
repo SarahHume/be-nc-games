@@ -1,5 +1,4 @@
-const { fetchReviews, fetchCommentsById } = require("../models/apiReviewsModels.js");
-const { fetchReviewById } = require("../models/apiReviewsModels.js");
+const { fetchReviews, fetchReviewById, fetchCommentsById, checkReviewExists } = require("../models/apiReviewsModels.js");
 
 exports.getReviews = (req, res) => {
     fetchReviews()
@@ -21,11 +20,13 @@ exports.getReviewById = (req, res, next) => {
 
 exports.getCommentsById = (req, res, next) => {
     const review_id = req.params.review_id;
-    fetchCommentsById(review_id)
-    .then((result) => {
-        res.status(200).send({comments: result});
-    })
-    .catch((err) => {
-        next(err);
-    })
+    const commentsPromises = [fetchCommentsById(review_id), checkReviewExists(review_id)];
+    // fetchCommentsById(review_id)
+    Promise.all(commentsPromises)
+        .then((result) => {
+            res.status(200).send({comments: result[0]});
+        })
+        .catch((err) => {
+            next(err);
+        })
 }

@@ -131,6 +131,15 @@ describe("/api/reviews/:review_id/comments", () => {
                 })
             })
     })
+    test("GET 200: should return an empty array if passed a valid review ID with no associated comments without throwing an error", () => {
+        return request(app)
+            .get("/api/reviews/1/comments")
+            .expect(200)
+            .then((response) => {
+                const { comments } = response.body;
+                expect(comments).toHaveLength(0);
+            })
+    })
     test("ERROR 404: Review ID does not exist", () => {
         return request(app)
             .get("/api/reviews/5000/comments")
