@@ -1,4 +1,12 @@
+const { fetchReviews } = require("../models/apiReviewsModels.js");
 const { fetchReviewById } = require("../models/apiReviewsModels.js");
+
+exports.getReviews = (req, res, next) => {
+    fetchReviews()
+    .then((result) => {
+        res.status(200).send({reviews: result});
+    })
+}
 
 exports.getReviewById = (req, res, next) => {
     const review_id = req.params.review_id;
