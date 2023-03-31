@@ -1,4 +1,4 @@
-const { fetchReviews, fetchReviewById, fetchCommentsById, checkReviewExists } = require("../models/apiReviewsModels.js");
+const { fetchReviews, fetchReviewById, fetchCommentsById, checkReviewExists, insertComment } = require("../models/apiReviewsModels.js");
 
 exports.getReviews = (req, res) => {
     fetchReviews()
@@ -29,4 +29,15 @@ exports.getCommentsById = (req, res, next) => {
         .catch((err) => {
             next(err);
         })
+}
+
+exports.postComment = (req, res, next) => {
+    const review_id = req.params.review_id;
+    insertComment(review_id, req.body)
+    .then((result) => {
+        res.status(201).send({comment: result[0]});
+    })
+    .catch((err) => {
+        next(err);
+    })
 }

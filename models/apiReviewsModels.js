@@ -33,3 +33,15 @@ exports.checkReviewExists = (review_id) => {
         }
     }))
 }
+
+exports.insertComment = (review_id, reqBody) => {
+    const date = new Date()
+    const author = reqBody.username;
+    const body = reqBody.body;
+    const votes = 0;
+
+    return db.query("INSERT INTO comments (votes, created_at, author, body, review_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [votes, date, author, body, review_id])
+    .then((result) => {
+        return result.rows;
+    })
+}
