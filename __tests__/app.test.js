@@ -203,6 +203,45 @@ describe("/api/reviews/:review_id/comments", () => {
                 expect(body.msg).toBe("Bad request");
             })
     })
+    test("ERROR 404: Review ID does not exist", () => {
+        const testComment = {
+            username: "dav3rid",
+            body: "This is a test comment"
+        }
+        return request(app)
+            .post("/api/reviews/5000/comments")
+            .send(testComment)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Review ID does not exist")
+            })
+    })
+    test("ERROR 400: Bad request - invalid review ID", () => {
+        const testComment = {
+            username: "dav3rid",
+            body: "This is a test comment"
+        }
+        return request(app)
+            .post("/api/reviews/banana/comments")
+            .send(testComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request")
+            })
+    })
+    test("ERROR 400: Bad request - username does not exist", () => {
+        const testComment = {
+            username: "evil_dav3rid",
+            body: "This is a test comment"
+        }
+        return request(app)
+            .post("/api/reviews/banana/comments")
+            .send(testComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request")
+            })
+    })
 })
 
 describe("Error - invalid path", () => {

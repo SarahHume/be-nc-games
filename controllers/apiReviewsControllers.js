@@ -21,7 +21,6 @@ exports.getReviewById = (req, res, next) => {
 exports.getCommentsById = (req, res, next) => {
     const review_id = req.params.review_id;
     const commentsPromises = [fetchCommentsById(review_id), checkReviewExists(review_id)];
-    // fetchCommentsById(review_id)
     Promise.all(commentsPromises)
         .then((result) => {
             res.status(200).send({comments: result[0]});
@@ -33,7 +32,10 @@ exports.getCommentsById = (req, res, next) => {
 
 exports.postComment = (req, res, next) => {
     const review_id = req.params.review_id;
-    insertComment(review_id, req.body)
+    checkReviewExists(review_id)
+    .then(() => {
+        return insertComment(review_id, req.body)
+    })
     .then((result) => {
         res.status(201).send({comment: result[0]});
     })
