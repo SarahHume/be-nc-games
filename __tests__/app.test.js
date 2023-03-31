@@ -235,11 +235,11 @@ describe("/api/reviews/:review_id/comments", () => {
             body: "This is a test comment"
         }
         return request(app)
-            .post("/api/reviews/banana/comments")
+            .post("/api/reviews/4/comments")
             .send(testComment)
-            .expect(400)
+            .expect(404)
             .then(({ body }) => {
-                expect(body.msg).toBe("Bad request")
+                expect(body.msg).toBe("Not found")
             })
     })
 })
