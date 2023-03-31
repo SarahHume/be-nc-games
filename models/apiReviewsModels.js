@@ -45,3 +45,11 @@ exports.insertComment = (review_id, reqBody) => {
         return result.rows;
     })
 }
+
+exports.updateReview = (review_id, reqBody) => {
+    const voteInc = reqBody.inc_votes;
+    return db.query("UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;", [voteInc, review_id])
+    .then((result) => {
+        return result.rows;
+    })
+}

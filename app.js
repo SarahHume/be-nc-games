@@ -1,6 +1,6 @@
 const express = require("express");
 const { getCategories } = require("./controllers/apiCategoriesControllers.js");
-const { getReviews, getReviewById, getCommentsById, postComment } = require("./controllers/apiReviewsControllers.js");
+const { getReviews, getReviewById, getCommentsById, postComment, patchReview } = require("./controllers/apiReviewsControllers.js");
 const { invalidPath, customErrors, psqlBadRequest } = require("./controllers/errorHandlingControllers.js");
 
 const app = express();
@@ -18,6 +18,8 @@ app.get("/api/reviews/:review_id/comments", getCommentsById);
 app.get("*", invalidPath);
 
 app.post("/api/reviews/:review_id/comments", postComment);
+
+app.patch("/api/reviews/:review_id", patchReview);
 
 app.use(customErrors);
 
