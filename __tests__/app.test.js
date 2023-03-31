@@ -72,7 +72,7 @@ describe("/api/reviews", () => {
 })
 
 describe("/api/reviews/:review_id", () => {
-    test("GET 200: should response with a review object", () => {
+    test("GET 200: should respond with a review object", () => {
         return request(app)
             .get("/api/reviews/3")
             .expect(200)
@@ -106,6 +106,67 @@ describe("/api/reviews/:review_id", () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("Bad request");
+            })
+    })
+    test("PATCH 200: should respond with a review object with an updated vote count", () => {
+        const testIncVotes = { inc_votes: 3 };
+        return request(app)
+            .patch("/api/reviews/2")
+            .expect(200)
+            .send(testIncVotes)
+            .then((response) => {
+                const { review } = response.body;
+                expect(review).toMatchObject({
+                    review_id: 2,
+                    title: 'Jenga',
+                    designer: 'Leslie Scott',
+                    owner: 'philippaclaire9',
+                    review_img_url: 'https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700',
+                    review_body: 'Fiddly fun for all the family',
+                    category: 'dexterity',
+                    created_at: expect.any(String),
+                    votes: 8
+                })
+            })
+    })
+    test("ERROR 404: Review ID does not exist", () => {
+        const testIncVotes = { inc_votes: 3 };
+        return request(app)
+            .patch("/api/reviews/5000")
+            .send(testIncVotes)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Review ID does not exist")
+            })
+    })
+    test("ERROR 400: Bad request (invalid review ID)", () => {
+        const testIncVotes = { inc_votes: 3 };
+        return request(app)
+            .patch("/api/reviews/banana")
+            .send(testIncVotes)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request")
+            })
+    })
+    test("ERROR 400: Bad request (malformed body)", () => {
+        const testIncVotes = { wrong_votes: 3 };
+        return request(app)
+            .patch("/api/reviews/2")
+            .send(testIncVotes)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request")
+            })
+    })
+    test("ERROR 400: Bad request (wrong data type)", () => {
+        const testIncVotes = { inc_votes: "three" };
+        return request(app)
+            .patch("/api/reviews/2")
+            .send(testIncVotes)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request")
             })
     })
 });
