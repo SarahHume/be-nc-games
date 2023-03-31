@@ -1,11 +1,11 @@
 const express = require("express");
 const { getCategories } = require("./controllers/apiCategoriesControllers.js");
-const { getReviews, getReviewById, getCommentsById } = require("./controllers/apiReviewsControllers.js");
-const { invalidPath } = require("./controllers/errorHandlingControllers.js");
-const { customErrors } = require("./controllers/errorHandlingControllers.js");
-const { psqlBadRequest } = require("./controllers/errorHandlingControllers.js");
+const { getReviews, getReviewById, getCommentsById, postComment } = require("./controllers/apiReviewsControllers.js");
+const { invalidPath, customErrors, psqlBadRequest } = require("./controllers/errorHandlingControllers.js");
 
 const app = express();
+
+app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
@@ -13,9 +13,11 @@ app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewById);
 
-app.get("/api/reviews/:review_id/comments", getCommentsById)
+app.get("/api/reviews/:review_id/comments", getCommentsById);
 
 app.get("*", invalidPath);
+
+app.post("/api/reviews/:review_id/comments", postComment);
 
 app.use(customErrors);
 

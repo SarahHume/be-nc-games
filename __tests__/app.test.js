@@ -156,6 +156,92 @@ describe("/api/reviews/:review_id/comments", () => {
                 expect(body.msg).toBe("Bad request");
             })
     })
+    test("POST 201: should insert the attached comment object into the database and return that comment", () => {
+        const testComment = {
+            username: "dav3rid",
+            body: "This is a test comment"
+        }
+        return request(app)
+            .post("/api/reviews/4/comments")
+            .send(testComment)
+            .expect(201)
+            .then((response) => {
+                const { comment } = response.body;
+                expect(comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    votes: 0,
+                    created_at: expect.any(String),
+                    author: "dav3rid",
+                    body: "This is a test comment",
+                    review_id: 4
+                })
+            })
+    })
+    test("ERROR 400: Bad request - malformed body", () => {
+        const testComment = {
+            username: "dav3rid",
+            fruit: "banana"
+        }
+        return request(app)
+            .post("/api/reviews/4/comments")
+            .send(testComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request");
+            })
+    })
+    test("ERROR 400: Bad request - incompatible data", () => {
+        const testComment = {
+            username: "dav3rid",
+            body: null
+        }
+        return request(app)
+            .post("/api/reviews/4/comments")
+            .send(testComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request");
+            })
+    })
+    test("ERROR 404: Review ID does not exist", () => {
+        const testComment = {
+            username: "dav3rid",
+            body: "This is a test comment"
+        }
+        return request(app)
+            .post("/api/reviews/5000/comments")
+            .send(testComment)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Review ID does not exist")
+            })
+    })
+    test("ERROR 400: Bad request - invalid review ID", () => {
+        const testComment = {
+            username: "dav3rid",
+            body: "This is a test comment"
+        }
+        return request(app)
+            .post("/api/reviews/banana/comments")
+            .send(testComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad request")
+            })
+    })
+    test("ERROR 400: Bad request - username does not exist", () => {
+        const testComment = {
+            username: "evil_dav3rid",
+            body: "This is a test comment"
+        }
+        return request(app)
+            .post("/api/reviews/4/comments")
+            .send(testComment)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Not found")
+            })
+    })
 })
 
 describe("Error - invalid path", () => {
