@@ -2,8 +2,11 @@ const express = require("express");
 const { getCategories } = require("./controllers/apiCategoriesControllers.js");
 const { getReviews, getReviewById, getCommentsById, postComment, patchReview } = require("./controllers/apiReviewsControllers.js");
 const { invalidPath, customErrors, psqlBadRequest } = require("./controllers/errorHandlingControllers.js");
+const cors = require('cors');
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
